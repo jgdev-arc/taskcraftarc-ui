@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { getAllTasks } from '../services/TaskService';
+import { useNavigate } from 'react-router-dom';
 
 interface Task {
     id: number;
@@ -8,32 +10,32 @@ interface Task {
 }
 
 const ListTaskComponent: React.FC = () => {
-    const dummyData: Task[] = [
-        {
-            id: 1,
-            title: "Learn Core Java",
-            description: "Learn Core Java with examples",
-            completed: false,
-        },
-        {
-            id: 2,
-            title: "Learn Spring Core",
-            description: "Learn Spring Core with examples",
-            completed: false,
-        },
-        {
-            id: 3,
-            title: "Learn Spring Boot",
-            description: "Learn Spring Boot with examples",
-            completed: false,
-        },
-    ];
+    const [tasks, setTasks] = useState<Task[] | undefined>();
 
-    const [tasks, setTasks] = useState<Task[]>(dummyData);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        listTasks();
+    }, []);
+
+    const listTasks = () => {
+        getAllTasks()
+            .then((res) => {
+                setTasks(res.data);
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
+
+    const addNewTask = () => {
+        navigate('/add-task');
+    };
 
     return (
         <div className="container">
             <h2 className="text-center">List of Tasks</h2>
+            <button className='btn btn-primary mb-2' onClick={addNewTask}>Add Task</button>
             <div>
                 <table className="table table-bordered table-striped">
                     <thead>
@@ -44,7 +46,7 @@ const ListTaskComponent: React.FC = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {tasks.map((task) => (
+                        {tasks?.map((task) => (
                             <tr key={task.id}>
                                 <td>{task.title}</td>
                                 <td>{task.description}</td>
