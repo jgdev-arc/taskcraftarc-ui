@@ -32,6 +32,11 @@ const ListTaskComponent: React.FC = () => {
         navigate('/add-task');
     };
 
+    const updateTask = (id: number) => {
+        console.log(id);
+        navigate(`/update-task/${id}`);
+    };
+
     return (
         <div className="container">
             <h2 className="text-center">List of Tasks</h2>
@@ -43,6 +48,7 @@ const ListTaskComponent: React.FC = () => {
                             <th>Task Title</th>
                             <th>Task Description</th>
                             <th>Task Completed</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,6 +57,9 @@ const ListTaskComponent: React.FC = () => {
                                 <td>{task.title}</td>
                                 <td>{task.description}</td>
                                 <td>{task.completed ? 'Yes' : 'No'}</td>
+                                <td>
+                                    <button className='btn btn-info' onClick={() => updateTask(task.id)}>Update</button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

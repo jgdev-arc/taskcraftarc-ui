@@ -1,6 +1,6 @@
-import React, { useState, FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { saveTask } from '../services/TaskService';
+import React, { useState, FormEvent, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getTask, saveTask } from '../services/TaskService';
 
 interface Task {
     title: string;
@@ -13,6 +13,7 @@ const TaskComponent: React.FC = () => {
     const [description, setDescription] = useState<string>('');
     const [completed, setCompleted] = useState<string>('false');
     const navigate = useNavigate();
+    const { id } = useParams<{ id?: string }>();
 
     const saveOrUpdateTask = (e: FormEvent) => {
         e.preventDefault();
@@ -30,13 +31,36 @@ const TaskComponent: React.FC = () => {
             });
     };
 
+    const pageTitle = () => {
+        if (id) {
+            return <h2 className='text-center'>Update Task</h2>;
+        } else {
+            return <h2 className='text-center'>Add Task</h2>;
+        }
+    };
+
+    useEffect(() => {
+        if (id) {
+            getTask(id)
+                .then((res) => {
+                    console.log(res.data);
+                    setTitle(res.data.title);
+                    setDescription(res.data.description);
+                    setCompleted(res.data.completed.toString());
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        }
+    }, [id]);
+
     return (
         <div>
             <div className='container'>
                 <br />
                 <div className='row'>
                     <div className='card col-md-6 offset-md-3 offset-md-3'>
-                        <h2 className='text-center'>Add Tasks</h2>
+                        {pageTitle()}
                         <div className='card-body'>
                             <form>
                                 <div className='form-group mb-2'>
