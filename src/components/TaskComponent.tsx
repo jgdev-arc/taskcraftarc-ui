@@ -1,6 +1,6 @@
 import React, { useState, FormEvent, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getTask, saveTask } from '../services/TaskService';
+import { getTask, saveTask, updateTask } from '../services/TaskService';
 
 interface Task {
     title: string;
@@ -21,14 +21,24 @@ const TaskComponent: React.FC = () => {
         const task: Task = { title, description, completed };
         console.log(task);
 
-        saveTask(task)
-            .then((res) => {
-                console.log(res.data);
-                navigate('/tasks');
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+        if (id) {
+            updateTask(Number(id), task)
+                .then((res) => {
+                    navigate('/tasks');
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        } else {
+            saveTask(task)
+                .then((res) => {
+                    console.log(res.data);
+                    navigate('/tasks');
+                })
+                .catch((err) => {
+                    console.error(err);
+                });
+        }
     };
 
     const pageTitle = () => {
@@ -41,7 +51,7 @@ const TaskComponent: React.FC = () => {
 
     useEffect(() => {
         if (id) {
-            getTask(id)
+            getTask(Number(id))
                 .then((res) => {
                     console.log(res.data);
                     setTitle(res.data.title);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getAllTasks } from '../services/TaskService';
+import { completeTask, deleteTask, getAllTasks, incompleteTask } from '../services/TaskService';
 import { useNavigate } from 'react-router-dom';
 
 interface Task {
@@ -11,6 +11,7 @@ interface Task {
 
 const ListTaskComponent: React.FC = () => {
     const [tasks, setTasks] = useState<Task[] | undefined>();
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
 
     const navigate = useNavigate();
 
@@ -33,8 +34,46 @@ const ListTaskComponent: React.FC = () => {
     };
 
     const updateTask = (id: number) => {
-        console.log(id);
         navigate(`/update-task/${id}`);
+    };
+
+    const removeTask = (id: number) => {
+        deleteTask(id)
+            .then(() => {
+                listTasks();
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
+
+    const showToast = (message: string) => {
+        setToastMessage(message);
+        setTimeout(() => {
+            setToastMessage(null);
+        }, 3000);
+    };
+
+    const markCompleteTask = (id: number) => {
+        completeTask(id)
+            .then(() => {
+                listTasks();
+                showToast('Task marked as completed. 🟢');
+            })
+            .catch((err) => {
+                console.error(err);
+            });
+    };
+
+    const markIncompleteTask = (id: number) => {
+        incompleteTask(id)
+            .then(() => {
+                listTasks();
+                showToast('Task marked as incomplete. 🔴');
+            })
+            .catch((err) => {
+                console.error(err);
+            });
     };
 
     return (
@@ -59,12 +98,20 @@ const ListTaskComponent: React.FC = () => {
                                 <td>{task.completed ? 'Yes' : 'No'}</td>
                                 <td>
                                     <button className='btn btn-info' onClick={() => updateTask(task.id)}>Update</button>
+                                    <button className='btn btn-danger' onClick={() => removeTask(task.id)} style={{ marginLeft: "10px" }}>Delete</button>
+                                    <button className='btn btn-success' onClick={() => markCompleteTask(task.id)} style={{ marginLeft: "10px" }}>Complete</button>
+                                    <button className='btn btn-dark' onClick={() => markIncompleteTask(task.id)} style={{ marginLeft: "10px" }}>Incomplete</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
+            {toastMessage && (
+                <div style={{ position: 'fixed', bottom: '70px', right: '20px', zIndex: 1000, backgroundColor: toastMessage.includes('🟢') ? 'green' : 'red', color: 'white', padding: '10px', borderRadius: '5px' }}>
+                    {toastMessage}
+                </div>
+            )}
         </div>
     );
 };

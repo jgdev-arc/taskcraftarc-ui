@@ -4,12 +4,14 @@ import HeaderComponent from './components/HeaderComponent'
 import ListTaskComponent from './components/ListTaskComponent'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import TaskComponent from './components/TaskComponent'
+import { ToastContainer } from 'react-toastify'
 
 function App() {
 
   return (
     <>
       <BrowserRouter>
+        <ToastContainer />
         <HeaderComponent />
         <Routes>
           <Route path='/' element={<ListTaskComponent />}></Route>
