@@ -1,5 +1,5 @@
 import React, { useState, FormEvent } from 'react';
-import { loginAPICall } from '../services/AuthService';
+import { loginAPICall, saveLoggedInUser, storeToken } from '../services/AuthService';
 import { useNavigate } from 'react-router-dom';
 
 const LoginComponent: React.FC = () => {
@@ -7,18 +7,25 @@ const LoginComponent: React.FC = () => {
     const [password, setPassword] = useState<string>('');
     const navigator = useNavigate();
 
-    const handleLoginForm = (e: FormEvent) => {
+    const handleLoginForm = async (e: FormEvent) => {
         e.preventDefault();
 
-        loginAPICall(username, password)
-            .then((res) => {
-                console.log(res.data);
-                navigator('/tasks');
-            })
-            .catch((err) => {
-                console.error(err);
-            });
+        try {
+            const res = await loginAPICall(username, password);
+            console.log(res.data);
+
+            const token = 'Basic ' + window.btoa(username + ':' + password);
+            storeToken(token);
+
+            saveLoggedInUser(username);
+            navigator('/tasks');
+
+            window.location.reload(false)
+        } catch (err) {
+            console.error(err);
+        }
     };
+
 
     return (
         <div className='container'>
