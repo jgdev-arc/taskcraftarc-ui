@@ -1,4 +1,5 @@
 import React, { useState, FormEvent } from 'react';
+import { registerAPICall } from '../services/AuthService';
 
 const RegisterComponent: React.FC = () => {
     const [name, setName] = useState<string>('');
@@ -6,12 +7,19 @@ const RegisterComponent: React.FC = () => {
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
-    const handleRegistrationForm = (e: FormEvent) => {
+    const handleRegistrationForm = async (e: FormEvent) => {
         e.preventDefault();
 
         const register = { name, username, email, password };
 
         console.log(register);
+
+        try {
+            const res = await registerAPICall(register);
+            console.log(res.data);
+        } catch (err) {
+            console.error(err);
+        }
     };
 
     return (

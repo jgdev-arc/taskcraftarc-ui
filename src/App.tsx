@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import TaskComponent from './components/TaskComponent'
 import { ToastContainer } from 'react-toastify'
 import RegisterComponent from './components/RegisterComponent'
+import LoginComponent from './components/LoginComponent'
 
 function App() {
 
@@ -20,6 +21,7 @@ function App() {
           <Route path='/add-task' element={<TaskComponent />}></Route>
           <Route path='/update-task/:id' element={<TaskComponent />}></Route>
           <Route path='/register' element={<RegisterComponent />}></Route>
+          <Route path='/login' element={<LoginComponent />}></Route>
         </Routes>
         <FooterComponent />
       </BrowserRouter>
